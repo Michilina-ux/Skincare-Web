@@ -288,7 +288,7 @@ $productos = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <h5 class="mb-3"><i class="bi bi-box-seam"></i> Productos Ordenados</h5>
                 <?php foreach($productos as $producto): ?>
                 <div class="product-item">
-                    <img src="images/<?php echo $producto['imagen_producto']; ?>" 
+                    <img src="imagenes/<?php echo $producto['imagen_producto']; ?>" 
                          alt="<?php echo $producto['nombre_producto']; ?>" 
                          class="product-image"
                          onerror="this.src='https://via.placeholder.com/60'">
@@ -311,13 +311,11 @@ $productos = $stmt->fetchAll(PDO::FETCH_ASSOC);
             
             <!-- Botones de Acción -->
             <div class="action-buttons">
-                <a href="mis_ordenes.php" class="btn btn-primary-custom me-2">
-                    <i class="bi bi-bag-check"></i> Ver Mis Órdenes
-                </a>
                 <a href="productos.php" class="btn btn-outline-custom">
                     <i class="bi bi-shop"></i> Seguir Comprando
                 </a>
             </div>
+
             
             <!-- Compartir en Redes -->
             <div class="mt-4">

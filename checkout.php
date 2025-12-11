@@ -134,8 +134,10 @@ if(isset($_POST['procesar_orden'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Checkout - New Gloow</title>
-    <link rel="icon" href="imagenes/Logo (1).png">
-
+      <link rel="icon" href="imagenes/Logo (1).png">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!--Iconos--><script src="https://kit.fontawesome.com/4b5e1ba30c.js" crossorigin="anonymous"></script>
+   
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
 

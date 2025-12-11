@@ -341,8 +341,8 @@
         <div class="box">
             <h2>SIGUENOS</h2>
             <div class="red-social">
-                <a href="https://www.facebook.com/profile.php?id=61577896257138" class="fa fa-facebook"></a>
-                <a href="https://www.instagram.com/mich_donas_?igsh=MXk4NWZ6eDZyZDdw" target="blank" class="fa fa-instagram"></a>
+                <a href="https://www.facebook.com/profile.php?id=61583747990511" class="fa fa-facebook"></a>
+                <a href="#" target="blank" class="fa fa-instagram"></a>
                 <a href="#" class="fa fa-twitter"></a>
             </div>
         </div>

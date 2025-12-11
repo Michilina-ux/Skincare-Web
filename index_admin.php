@@ -139,9 +139,8 @@ $productos_vendidos = $pdo->query("
     <link rel="stylesheet" href="css/admi.css">
     <link rel="icon" href="imagenes/Logo (1).png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!--Iconos--><script src="https://kit.fontawesome.com/4b5e1ba30c.js" crossorigin="anonymous"></script>
-   
- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <script src="https://kit.fontawesome.com/4b5e1ba30c.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
 </head>
 <body>
     <div class="container-fluid">
@@ -178,9 +177,9 @@ $productos_vendidos = $pdo->query("
                             <i class="bi bi-graph-up"></i> Reportes
                         </a>
                     </li>
-                     <li class="nav-item">
-                        <a class="nav-link" href="logout.php" >
-                            <i class="fa-solid fa-unlock-keyhole"></i>Cerrar Sesion
+                    <li class="nav-item">
+                        <a class="nav-link" href="logout.php">
+                            <i class="fa-solid fa-unlock-keyhole"></i> Cerrar Sesión
                         </a>
                     </li>
                 </ul>
@@ -196,7 +195,7 @@ $productos_vendidos = $pdo->query("
                 <?php endif; ?>
 
                 <!-- Dashboard -->
-            <div id="dashboard" class="content-section">
+                <div id="dashboard" class="content-section">
                     <h2 class="section-title"><i class="bi bi-speedometer2"></i> Dashboard</h2>
                     
                     <div class="row">
@@ -337,8 +336,8 @@ $productos_vendidos = $pdo->query("
                 </div>
 
                 <!-- Órdenes -->
-                <div id="ordenes" class="content-section" >
-                    <h2 class="section-title"><i class="bi bi-cart-check"></i>Órdenes</h2>
+                <div id="ordenes" class="content-section">
+                    <h2 class="section-title"><i class="bi bi-cart-check"></i> Órdenes</h2>
                     
                     <div class="table-container">
                         <div class="table-responsive">
@@ -392,8 +391,8 @@ $productos_vendidos = $pdo->query("
                 </div>
 
                 <!-- Usuarios -->
-                <div id="usuarios" class="content-section" >
-                    <h2 class="section-title"><i class="bi bi-people"></i>Usuarios</h2>
+                <div id="usuarios" class="content-section">
+                    <h2 class="section-title"><i class="bi bi-people"></i> Usuarios</h2>
                     
                     <div class="table-container">
                         <div class="table-responsive">
@@ -445,7 +444,7 @@ $productos_vendidos = $pdo->query("
                 </div>
 
                 <!-- Reportes -->
-                <div id="reportes" class="content-section" >
+                <div id="reportes" class="content-section">
                     <h2 class="section-title"><i class="bi bi-graph-up"></i> Reportes y Estadísticas</h2>
                     
                     <div class="table-container">
@@ -520,4 +519,118 @@ $productos_vendidos = $pdo->query("
                                     </select>
                                 </div>
                             </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Precio</label>
+                                    <input type="number" class="form-control" name="precio" id="precio" step="0.01" min="0" required>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Nombre de la Imagen</label>
+                            <input type="text" class="form-control" name="imagen" id="imagen" placeholder="ejemplo.jpg" required>
+                            <small class="text-muted">Ingresa el nombre del archivo de imagen (debe estar en la carpeta imagenes/)</small>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" name="agregar_producto" id="btnGuardar" class="btn btn-primary">
+                            <i class="bi bi-save"></i> Guardar Producto
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Navegación entre secciones
+        document.addEventListener('DOMContentLoaded', function() {
+            const navLinks = document.querySelectorAll('.nav-link[data-section]');
+            const sections = document.querySelectorAll('.content-section');
+            
+            // Ocultar todas las secciones excepto dashboard
+            sections.forEach(section => {
+                if(section.id !== 'dashboard') {
+                    section.style.display = 'none';
+                }
+            });
+            
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Remover clase active de todos los links
+                    navLinks.forEach(l => l.classList.remove('active'));
+                    
+                    // Agregar clase active al link clickeado
+                    this.classList.add('active');
+                    
+                    // Ocultar todas las secciones
+                    sections.forEach(section => {
+                        section.style.display = 'none';
+                    });
+                    
+                    // Mostrar la sección seleccionada
+                    const targetSection = this.getAttribute('data-section');
+                    document.getElementById(targetSection).style.display = 'block';
+                });
+            });
+        });
+
+        // Función para editar producto
+        function editarProducto(producto) {
+            // Cambiar título del modal
+            document.getElementById('modalProductoTitulo').innerHTML = '<i class="bi bi-pencil"></i> Editar Producto';
+            
+            // Llenar los campos del formulario
+            document.getElementById('id_producto').value = producto.id_producto;
+            document.getElementById('nombre').value = producto.nombre_producto;
+            document.getElementById('descripcion').value = producto.descripcion_producto;
+            document.getElementById('categoria').value = producto.id_categoria;
+            document.getElementById('precio').value = producto.precio;
+            document.getElementById('imagen').value = producto.imagen_producto;
+            
+            // Cambiar el botón de submit
+            const btnGuardar = document.getElementById('btnGuardar');
+            btnGuardar.name = 'actualizar_producto';
+            btnGuardar.innerHTML = '<i class="bi bi-save"></i> Actualizar Producto';
+            
+            // Mostrar el modal
+            const modal = new bootstrap.Modal(document.getElementById('modalProducto'));
+            modal.show();
+        }
+
+        // Resetear formulario cuando se cierra el modal
+        document.getElementById('modalProducto').addEventListener('hidden.bs.modal', function() {
+            // Resetear formulario
+            document.getElementById('formProducto').reset();
+            document.getElementById('id_producto').value = '';
+            
+            // Restaurar título
+            document.getElementById('modalProductoTitulo').innerHTML = '<i class="bi bi-plus-circle"></i> Agregar Producto';
+            
+            // Restaurar botón
+            const btnGuardar = document.getElementById('btnGuardar');
+            btnGuardar.name = 'agregar_producto';
+            btnGuardar.innerHTML = '<i class="bi bi-save"></i> Guardar Producto';
+        });
+
+        // Función para ver detalle de orden (placeholder)
+        function verDetalleOrden(idOrden) {
+            alert('Función de detalle de orden #' + idOrden + ' - Por implementar');
+        }
+
+        // Auto-cerrar alertas después de 5 segundos
+        setTimeout(function() {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                const bsAlert = new bootstrap.Alert(alert);
+                bsAlert.close();
+            });
+        }, 5000);
+    </script>
+</body>
 </html>

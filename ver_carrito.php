@@ -1,8 +1,16 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 0); // No mostrar errores en pantalla
+ini_set('log_errors', 1);
+ini_set('error_log', 'php_errors.log'); // Guardar errores en archivo
+
 session_start();
 
 if(!isset($_SESSION['usuario_id'])) {
-    echo '<div class="alert alert-warning">Debes iniciar sesión</div>';
+    echo '<div class="alert alert-warning text-center">
+            <i class="bi bi-exclamation-triangle" style="font-size: 2rem;"></i>
+            <p class="mt-2">Debes iniciar sesión para ver tu carrito</p>
+          </div>';
     exit;
 }
 
@@ -92,15 +100,19 @@ $total = array_sum(array_column($items, 'subtotal'));
                 </td>
                 <td>$<?php echo number_format($item['precio_unitario'], 2); ?></td>
                 <td>
-                    <div class="input-group" style="width: 120px;">
-                        <button class="btn btn-sm btn-outline-secondary" onclick="actualizarCantidad(<?php echo $item['id_item']; ?>, -1)">-</button>
+                    <div class="input-group" style="width: 130px;">
+                        <button class="btn btn-sm btn-outline-secondary" type="button" onclick="actualizarCantidad(<?php echo $item['id_item']; ?>, -1)">
+                            <i class="bi bi-dash"></i>
+                        </button>
                         <input type="text" class="form-control form-control-sm text-center" value="<?php echo $item['cantidad']; ?>" readonly>
-                        <button class="btn btn-sm btn-outline-secondary" onclick="actualizarCantidad(<?php echo $item['id_item']; ?>, 1)">+</button>
+                        <button class="btn btn-sm btn-outline-secondary" type="button" onclick="actualizarCantidad(<?php echo $item['id_item']; ?>, 1)">
+                            <i class="bi bi-plus"></i>
+                        </button>
                     </div>
                 </td>
                 <td><strong>$<?php echo number_format($item['subtotal'], 2); ?></strong></td>
                 <td>
-                    <button class="btn btn-sm btn-danger" onclick="eliminarItem(<?php echo $item['id_item']; ?>)">
+                    <button class="btn btn-sm btn-danger" type="button" onclick="eliminarItem(<?php echo $item['id_item']; ?>)">
                         <i class="bi bi-trash"></i>
                     </button>
                 </td>
@@ -125,6 +137,10 @@ $total = array_sum(array_column($items, 'subtotal'));
 
 <script>
 function actualizarCantidad(itemId, cambio) {
+    // Deshabilitar botones temporalmente
+    const botones = document.querySelectorAll(`#item-${itemId} button`);
+    botones.forEach(btn => btn.disabled = true);
+    
     fetch('actualizar_carrito.php', {
         method: 'POST',
         headers: {'Content-Type': 'application/x-www-form-urlencoded'},
@@ -133,22 +149,39 @@ function actualizarCantidad(itemId, cambio) {
     .then(response => response.json())
     .then(data => {
         if(data.success) {
-            // Recargar carrito
+            // Recargar el contenido del carrito
             fetch('ver_carrito.php')
                 .then(response => response.text())
                 .then(html => {
                     document.getElementById('carritoContenido').innerHTML = html;
-                    // Actualizar badge
-                    location.reload();
+                    
+                    // Actualizar contador del carrito en el header (si existe)
+                    actualizarContadorCarrito();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error al actualizar el carrito');
                 });
         } else {
-            alert(data.message);
+            alert(data.message || 'Error al actualizar cantidad');
+            // Re-habilitar botones
+            botones.forEach(btn => btn.disabled = false);
         }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error de conexión');
+        // Re-habilitar botones
+        botones.forEach(btn => btn.disabled = false);
     });
 }
 
 function eliminarItem(itemId) {
     if(confirm('¿Eliminar este producto del carrito?')) {
+        // Deshabilitar botones
+        const botones = document.querySelectorAll(`#item-${itemId} button`);
+        botones.forEach(btn => btn.disabled = true);
+        
         fetch('eliminar_item.php', {
             method: 'POST',
             headers: {'Content-Type': 'application/x-www-form-urlencoded'},
@@ -157,11 +190,51 @@ function eliminarItem(itemId) {
         .then(response => response.json())
         .then(data => {
             if(data.success) {
-                location.reload();
+                // Recargar contenido del carrito
+                fetch('ver_carrito.php')
+                    .then(response => response.text())
+                    .then(html => {
+                        document.getElementById('carritoContenido').innerHTML = html;
+                        
+                        // Actualizar contador del carrito
+                        actualizarContadorCarrito();
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Error al actualizar el carrito');
+                    });
             } else {
-                alert(data.message);
+                alert(data.message || 'Error al eliminar producto');
+                // Re-habilitar botones
+                botones.forEach(btn => btn.disabled = false);
             }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error de conexión');
+            // Re-habilitar botones
+            botones.forEach(btn => btn.disabled = false);
         });
     }
+}
+
+// Función para actualizar el contador del carrito en el header
+function actualizarContadorCarrito() {
+    fetch('obtener_cantidad_carrito.php')
+        .then(response => response.json())
+        .then(data => {
+            const contadorElement = document.querySelector('.cart-count');
+            if(contadorElement && data.cantidad !== undefined) {
+                contadorElement.textContent = data.cantidad;
+                
+                // Si el carrito está vacío, ocultar el contador
+                if(data.cantidad === 0) {
+                    contadorElement.style.display = 'none';
+                } else {
+                    contadorElement.style.display = 'inline-block';
+                }
+            }
+        })
+        .catch(error => console.error('Error al actualizar contador:', error));
 }
 </script>
